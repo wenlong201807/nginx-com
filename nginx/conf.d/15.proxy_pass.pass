@@ -1,0 +1,47 @@
+server {
+  listen       3001;
+  server_name  47.98.181.79; # 也可以写域名  
+
+  # 正向代理
+  # 正向代理的对象是[客户端]，服务器端看不到真正的客户端
+  # 通过公司代理的服务器上网
+
+  # 反向代理
+  # 反向代理的对象是服务端，客户端看不到真正的服务器
+  # nginx代理应用服务器
+  # 用户浏览器 不变 用户发出请求请求的是代理服务器 后面有真正的 [模拟的web服务器集群]
+  # 项目中，后台接口一般都是这样操作，
+
+  # 需要区别哪些请求是非正常的用户请求
+
+  # 使用 http_refer 防盗链 
+
+  location ~ ^/api {
+    proxy_pass http://localhost:3000; # 后台服务器的域名端口
+    proxy_redirect default; # 重定向
+
+    proxy_set_header Host $http_host;  # 向后台传递头信息 向上服务
+    proxy_set_header X-Real-Ip $remote_addr; # 把真实ip传给应用服务器
+
+    proxy_connect_timeout 30; # 默认超时时间
+    proxy_send_timeout 60; # 发送超时时间
+    proxy_read_timeout 60; # 读取超时时间
+
+    proxy_buffering on; # 这个开启后，nginx会尽可能的读取所有的upstream 端传输到饿数据到 buffer， 知道proxy_buffer...
+    proxy_buffers 4 128k;
+    proxy_busy_buffers_size 256k;
+    proxy_buffer_size 32k;
+    proxy_max_temp_file_size 256k;
+  }
+
+  # 测试方式
+  # curl http://localhost/api/users.json
+
+  # 科学上网
+  # resolver 8.8.8.8; # 谷歌的域名解析地址
+  # location / {
+  #   # $http_host # 要访问的主机名 $request_uri 请求路径
+  #   proxy_pass http://$http_host$request_uri;
+  # }
+
+}

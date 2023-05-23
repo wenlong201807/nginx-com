@@ -1,0 +1,35 @@
+server {
+  listen      6009;
+  server_name  wenlong.live;
+  # server_name  localhost;
+
+  #access_log  /var/log/nginx/host.access.log  main;
+
+  # 静态页面 浏览器中url匹配路径 访问这里
+  location / {
+      root   /opt/statics;
+      index  index.html index.htm;
+
+      # 尝试查找文件的顺序如下
+      try_files $uri $uri/ /index.html;
+  }
+
+  # location ~* .(png|gif|ico|jpg|jpeg)$ {
+	#     root   /opt/statics;
+	#     add_header Content-Type image/png;
+	#     error_page 404   error.html;
+  # }
+
+  # location ~* .(pdf)$ {
+	#     root   /opt/statics;
+	#     add_header Content-Type application/octet-stream;
+	#     # add_header Content-Type application/pdf;
+	#     error_page 404   error.html;
+  # }
+
+  error_page   500 502 503 504  /50x.html;
+  location = /50x.html {
+      root   /usr/share/nginx/html;
+  }
+}
+

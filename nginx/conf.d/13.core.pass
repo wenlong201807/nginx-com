@@ -1,0 +1,23 @@
+server {
+  listen       3001;
+  server_name  47.98.181.79; # 也可以写域名  
+
+  # 生成压缩文件指令 gzip index.txt
+
+  # 与此监听端口不一致，或者域名不一致，导致的跨域
+  location ~ .*\.json$ {
+    add_header Access-Control-Allow-Origin http://localhost:3000/user.json;
+    add_header Access-Control-Allow-Methods GET,POST,PUT,DELETE,OPTIONS;
+    root   /opt/nginx-test; # 对应文件存放路径 
+  }
+
+  # let xhr = new XHRHttpRequest();
+  # xhr.open('GET', 'http://localhost:3000/user.json', true);
+  # xhr.onreadystatechange = function() {
+  #   if (xhr.readState == 4 && xhr.status === 200) {
+  #     console.log(xhr.responseText);
+  #   }
+  # }
+  # xhr.send()
+
+}

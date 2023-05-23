@@ -1,0 +1,43 @@
+# 服务池  weight=5 访问权重，数字越大，被访问到的几率越高
+upstream custom_upstream_name {
+  server 127.0.0.1:3000 weight=10; # 后台服务地址1
+  server 127.0.0.1:4000 weight=2; # 后台服务地址2
+  server 127.0.0.1:5000 weight=5; # 后台服务地址3
+  server 127.0.0.1:5000 weight=5 max_fails=1 fail_timeout=11s; # 后台服务地址4
+}
+# 后端服务器调试状态 (可配置的其他字段)
+# down 当前的服务不参与负载均衡
+# backup 当其他节点都无法使用时的备份的服务器
+# max_fails 允许请求失败的次数，到达最大次数就会休眠
+# fail_timeout 经过max_fails 失败后，服务暂停的时间 默认10秒
+# max_conns 限制每个server最大的接收连接数，性能高的服务器可以连接数多一些
+
+# 分配方式
+# 
+
+# 用node启动三个后台服务
+# ps -ef | grep node 检查一下
+# 查看日志 tail -f /var/log/nginx/access.log
+
+server {
+  listen       3001;
+  server_name  47.98.181.79; # 也可以写域名  
+
+  # 负载均衡
+  # 使用集群是网站解决高并发，海量数据问题的常见手段
+  # 当一台服务器的处理能力，存储空间不足时，不要企图去换更强大的服务器，对大象网站而言，不管多么强大的服务器，都满足不了网站持续增长的业务需求。
+  # 这种情况下，更恰当的做法是增加一台服务器分担原有服务器的访问及存储压力，通过负载均衡调度服务器，
+  #   将来自浏览器的访问请求分发到应用服务器集群中的任何一台服务器上，
+  #   如果有更多的用户，就在集群中加入更多的应用服务器，使应用服务器的负载压力不再成为整个网站的瓶颈。
+
+  # nginx把请求转发到后台的一组 upstream 服务池
+  # 
+
+  # 谷歌的dns chrome://net-internals/#dns
+  
+  # 当访问路由为 /api开头时，会轮询(默认)的访问服务池中的服务器
+  location ~ ^/api {
+    proxy_pass http://custom_upstream_name; # custom_upstream_name 是集群指定的名字
+  }
+
+}

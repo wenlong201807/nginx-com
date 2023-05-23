@@ -1,0 +1,59 @@
+limit_conn_zone $binary_remote_addr zone=conn_zone:1m;
+# $binary_remote_addr 客户端ip地址 请求区域名 req_zone(与后面需要保持一致)，且为1M空间 限制频率 1秒内只允许发1个
+limit_req_zone $binary_remote_addr zone=req_zone:1m rate=1r/s;
+
+server {
+  listen       80;
+  server_name  47.98.181.79; # 也可以写域名,ip
+
+  #access_log  /var/log/nginx/host.access.log  main;
+  # 新增，作为测试
+  # location /mystatus {
+  #   stub_status;
+  # }
+
+  location / {
+      # 经查看 路径/usr/share/nginx/html内 有两个磨人文件： 50x.html  index.html
+      root   /opt/app/code; # 访问 / 时，对应文件存放路径 
+      # limit_conn conn_zone 1; # 限制服务端同时只允许1个服务进来
+      # limit_req zone=req_zone burst=3 nodelay; # req_zone 与上面同名
+      # limit_req zone=req_zone burst=3;
+      # limit_req zone=req_zone;
+      index  index.html index.htm; # 访问 / 时，对应root路径下的哪个文件
+      # random_index on; # 访问 /opt/app/code 目录下的任意一个文件
+      # sub_filter '<h1>wenlong' '<h1>666wenlong'; # 默认只能替换第一个匹配的
+      # sub_filter_once off; # 关闭后，可以替换所有匹配的内容
+  }
+
+  #error_page  404              /404.html;
+
+  # redirect server error pages to the static page /50x.html
+  #
+  error_page   500 502 503 504  /50x.html;
+  location = /50x.html {
+      root   /usr/share/nginx/html;
+  }
+
+  # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+  #
+  #location ~ \.php$ {
+  #    proxy_pass   http://127.0.0.1;
+  #}
+
+  # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+  #
+  #location ~ \.php$ {
+  #    root           html;
+  #    fastcgi_pass   127.0.0.1:9000;
+  #    fastcgi_index  index.php;
+  #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+  #    include        fastcgi_params;
+  #}
+
+  # deny access to .htaccess files, if Apache's document root
+  # concurs with nginx's one
+  #
+  #location ~ /\.ht {
+  #    deny  all;
+  #}
+}

@@ -1,0 +1,36 @@
+
+user  nginx;
+worker_processes  auto;
+
+error_log  /var/log/nginx/error.log notice;
+pid        /var/run/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       /etc/nginx/mime.types; # 包含内容和文件名后缀的对应关系
+    default_type  application/octet-stream; # 默认的Content-Type 
+
+    # 定义一个日志格式 main 
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      ' "$http_x_forwarded_for" ';
+                      # "$http_user_agent"
+
+    access_log  /var/log/nginx/access.log  main; # 指定访问日志的存放位置，格式为 main(与上面的一致)
+
+    sendfile        on; # 零拷贝模式
+    #tcp_nopush     on; # tcp不推 有一定的缓存
+
+    keepalive_timeout  65; # 活动链接的超时间 秒
+
+    #gzip  on; # 是否压缩 -> 后端解压
+
+    include /etc/nginx/conf.d/*.conf; # 包含其他配置文件
+
+
+}

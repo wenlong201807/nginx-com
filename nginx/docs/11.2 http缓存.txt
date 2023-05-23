@@ -1,0 +1,4 @@
+
+https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Caching#vary_%E5%93%8D%E5%BA%94
+HTTP 缓存
+

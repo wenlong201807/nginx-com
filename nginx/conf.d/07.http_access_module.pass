@@ -1,0 +1,27 @@
+server {
+  listen       3001;
+  server_name  47.98.181.79; # 也可以写域名  
+
+  # 基于ip的访问控制 -http_access_module
+  # 基于用户的信任登陆 -http_auth_basic_module
+
+  
+  location / {
+    root   /opt/nginx-test; # 对应文件存放路径 
+    index index.html index.htm;
+  }
+
+  # https://nginx.org/en/docs/http/ngx_http_access_module.html
+  # 浏览器访问 http://47.98.181.79:3001/admin.html  -> 404 not found
+  # curl http://47.98.181.79:3001/admin.html
+  location ~ ^/admin.html {
+    # root 没有全局定义的访问文件 必须要有局部的访问文件设定
+    root   /opt/nginx-test; # 对应文件存放路径 
+    # 需要有一个 admin.html 文件
+
+    deny 103.75.152.104; # 禁止访问的ip
+    allow all; # 除了被禁止的ip外，其他的ip都能访问
+    # allow 103.75.152.102; # 也可以写成ip段的方式  103.75.152.0/24
+  }
+
+}

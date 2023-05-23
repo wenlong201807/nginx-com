@@ -1,0 +1,26 @@
+server {
+  listen       3001;
+  server_name  47.98.181.79; # 也可以写域名  
+
+  # 防止网站资源被盗用
+  # 保证信息安全
+  # 放置流量过量
+
+  # 需要区别哪些请求是非正常的用户请求
+
+  # 使用 http_refer 防盗链 
+
+  location ~ .*\.(jpg|png|gif)$ {
+    # expires 1h;
+    # gzip_http_version 1.1; 启用gzip压缩所需要的http最低版本
+    # gzip_comp_level 3; # 压缩级别，压缩比率越高，文件被压缩的体积越小
+    # gzip_types  image/jpeg image/png image/gif; # 进行压缩的文件类型
+    # none 没有refer blocked 非正式http请求 特定ip
+    valid_referers none blocked 47.98.181.79; # valid_referers 后面出现的这些值，标识允许访问的
+    if ($invalid_referer) { # 验证通过为0 不通过为1
+      return 403;
+    }
+    root   /opt/nginx-test; # 对应文件存放路径 
+  }
+
+}

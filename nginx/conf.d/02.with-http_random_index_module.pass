@@ -1,0 +1,12 @@
+server {
+  listen       3001;
+  server_name  47.98.181.79; # 也可以写域名  
+
+  # 随机访问文件
+  # 浏览器访问 http://47.98.181.79:3001
+  location / {
+    root   /opt/nginx-test/rand-file; # 访问 / 时，对应文件存放路径 
+    random_index on; # 访问指定浏览器的url时，获取指定文件存放路径下的任意.html文件
+  }
+
+}

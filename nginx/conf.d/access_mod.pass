@@ -1,0 +1,59 @@
+server {
+  listen       80;
+  server_name  localhost; # 也可以写域名
+
+  #access_log  /var/log/nginx/host.access.log  main;
+
+  location / {
+      root   /opt/app/code; # 访问 / 时，对应文件存放路径 
+      # 经查看 路径/usr/share/nginx/html内 有两个默认文件： 50x.html  index.html
+      index  index.html index.htm; # 访问 / 时，对应root路径下的哪个文件
+  }
+
+  # location ~ ^/admin.html { # 浏览器url为： http://47.98.181.79/admin.html 访问时进入此路由
+  #     root   /opt/app/code; # 访问 / 时，对应文件存放路径 
+  #     deny 103.75.152.102; # 禁止访问的ip
+  #     allow all; # 除了被禁止的ip外，其他的ip都能访问
+  #     # 经查看 路径/usr/share/nginx/html内 有两个默认文件： 50x.html  index.html
+  #     index  index.html index.htm; # 访问 / 时，对应root路径下的哪个文件
+  # }
+  location ~ ^/admin.html { # 浏览器url为： http://47.98.181.79/admin.html 访问时进入此路由
+      root   /opt/app/code; # 访问 / 时，对应文件存放路径 
+      allow 103.75.152.102; # 也可以写成ip段的方式  103.75.152.0/24
+      deny all;
+      # 经查看 路径/usr/share/nginx/html内 有两个默认文件： 50x.html  index.html
+      index  index.html index.htm; # 访问 / 时，对应root路径下的哪个文件
+  }
+
+  #error_page  404              /404.html;
+
+  # redirect server error pages to the static page /50x.html
+  #
+  error_page   500 502 503 504  /50x.html;
+  location = /50x.html {
+      root   /usr/share/nginx/html;
+  }
+
+  # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+  #
+  #location ~ \.php$ {
+  #    proxy_pass   http://127.0.0.1;
+  #}
+
+  # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+  #
+  #location ~ \.php$ {
+  #    root           html;
+  #    fastcgi_pass   127.0.0.1:9000;
+  #    fastcgi_index  index.php;
+  #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+  #    include        fastcgi_params;
+  #}
+
+  # deny access to .htaccess files, if Apache's document root
+  # concurs with nginx's one
+  #
+  #location ~ /\.ht {
+  #    deny  all;
+  #}
+}

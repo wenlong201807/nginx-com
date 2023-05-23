@@ -1,0 +1,27 @@
+server {
+  listen       3001;
+  server_name  47.98.181.79; # 也可以写域名  
+
+  # 参考资料 https://www.jianshu.com/p/1c0691c9ad3c
+  # https://nginx.org/en/docs/http/ngx_http_auth_basic_module.html#auth_basic
+  # 浏览器访问 http://47.98.181.79:3001/admin.html  -> 404 not found
+  # curl http://47.98.181.79:3001/admin.html
+  location ~ ^/admin.html {
+    # root 没有全局定义的访问文件 必须要有局部的访问文件设定
+    root   /opt/nginx-test; # 对应文件存放路径 
+    # 需要有一个 admin.html 文件
+    index  index.html index.htm; # 对应root路径下的哪个文件
+
+    # auth_basic "必须登陆后才能访问此网站";
+    auth_basic on;
+    auth_basic_user_file /etc/nginx/08.auth_basic_pwd.txt;
+    # 生成密码指令 htpasswd -c /etc/nginx/08.auth_basic_pwd.txt zhangsan
+    # 提示输入密码: 123
+  }
+
+  location / {
+    root   /opt/nginx-test; # 对应文件存放路径 
+    index index.html index.htm;
+  }
+
+}

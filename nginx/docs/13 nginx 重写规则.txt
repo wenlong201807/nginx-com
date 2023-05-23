@@ -1,0 +1,4 @@
+
+
+参考资料: https://www.nginx.com/blog/creating-nginx-rewrite-rules/
+创建 NGINX 重写规则

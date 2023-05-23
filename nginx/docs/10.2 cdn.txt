@@ -1,0 +1,24 @@
+CDN
+
+cdn   全称是 Content Delivery Network ，即内容分发网络。
+cdn 系统能够实施地根据网络流量和各节点的链接、负载状况以及到用户的距离和响应时间等 综合信息将用户的请求重新导向离用户最近的服务节点上。其目的是使用户可就近取得所需内容，解决internet网路拥挤的状况，提高用户访问网站的响应速度。
+
+
+作用上下文为 http server location
+    sendfile        on; # 零拷贝模式 cdn 配置是为on
+    # 在sendfile开启的情况下，合并多个数据包，提高网络包的传输效率
+    # 应用场景 下载的时候开启
+    tcp_nopush      on;  # tcp不推 有一定缓存
+    # 在keepalive连接下，提高网络包的传输实时性 vs sendfile  (两者作用相反)
+    tcp_nodelay     on;
+
+    keepalive_timeout  65;
+
+    # gzip 压缩文件可以节约带宽和提高网路传输效率
+    #gzip  on;
+    # gzip_comp_level 压缩比率越高，文件被压缩的体积越小,默认为1
+    # gzip_http_version 压缩版本默认为 1.1
+    # http_gzip_static_module
+      # 先找磁盘上同名的 .gz 这个文件是否存在，节约cpu的压缩时间和性能损耗
+      # http_gzip_static_module 预计gzip模块
+      # http_gunzip_module 应用支持gunzip 的压缩方式

@@ -1,0 +1,84 @@
+limit_req_zone $binary_remote_addr zone=req_zone:10m rate=1r/s;
+
+# $binary_remote_addr 表示远程的ip地址
+# zone=req_zone:10m 表示一个内存区域大小为10m，并且设定了名称为 req_zone
+# rate=1r/s 表示请求的速率是1秒1个请求
+# zone=req_zone 表示这个参数对应的全局设置就是req_zone的那个内存区域
+# burst=3 表示请求队列的长度
+# nodelay 表示不延时
+
+
+server {
+  listen       3001;
+  server_name  47.98.181.79; # 也可以写域名  
+
+  # https://nginx.org/en/docs/http/ngx_http_sub_module.html
+  # 随机访问文件
+  # 浏览器访问 http://47.98.181.79:3001/sub_filter.html
+  location / {
+    root   /opt/nginx-test; # 对应文件存放路径 
+    index index.html index.htm;
+
+    # 限定请求数，限定规则为req_zone的约定： 总量10m大小，每分钟请求1次
+    # limit_req zone=req_zone;
+
+    # burst=3 nodelay 突发情况下可以请求三个，除去常规约定的请求数外，其他的放在队列，延迟请求
+    # 缓存区队列 burst=3 不延期，即每秒最多可处理rate+burst个，同时处理rate个
+    limit_req zone=req_zone burst=3 nodelay;
+    # 测试访问
+    # ab -n 40 -c 20 http://localhost:3001/index.html # 总请求数 40 ，并发20
+    # Complete requests:      40
+    # Failed requests:        36
+  }
+
+  # 测试访问
+  # ab -n 40 -c 20 http://localhost:3001/index.html # 总请求数 40 ，并发20
+
+  # 返回结果
+  # This is ApacheBench, Version 2.3 <$Revision: 1843412 $>
+  # Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+  # Licensed to The Apache Software Foundation, http://www.apache.org/
+  # 
+  # Benchmarking localhost (be patient).....done
+  # 
+  # 
+  # Server Software:        nginx/1.20.2
+  # Server Hostname:        localhost
+  # Server Port:            3001
+  # 
+  # Document Path:          /index.html
+  # Document Length:        272 bytes
+  # 
+  # Concurrency Level:      20
+  # Time taken for tests:   0.004 seconds
+  # Complete requests:      40 # 只成功了一个，因为每秒只允许发一个请求
+  # Failed requests:        39
+  #    (Connect: 0, Receive: 0, Length: 39, Exceptions: 0)
+  # Non-2xx responses:      39
+  # Total transferred:      14896 bytes
+  # HTML transferred:       7955 bytes
+  # Requests per second:    10498.69 [#/sec] (mean)
+  # Time per request:       1.905 [ms] (mean)
+  # Time per request:       0.095 [ms] (mean, across all concurrent requests)
+  # Transfer rate:          3818.08 [Kbytes/sec] received
+  # 
+  # Connection Times (ms)
+  #               min  mean[+/-sd] median   max
+  # Connect:        0    0   0.1      0       1
+  # Processing:     1    1   0.5      2       2
+  # Waiting:        0    1   0.4      1       1
+  # Total:          1    2   0.5      2       2
+  # WARNING: The median and mean for the processing time are not within a normal   # deviation
+  #         These results are probably not that reliable.
+  # 
+  # Percentage of the requests served within a certain time (ms)
+  #   50%      2
+  #   66%      2
+  #   75%      2
+  #   80%      2
+  #   90%      2
+  #   95%      2
+  #   98%      2
+  #   99%      2
+  #  100%      2 (longest request)
+}

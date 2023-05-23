@@ -1,0 +1,31 @@
+server {
+  listen       3001;
+  server_name  47.98.181.79; # 也可以写域名  
+
+  location / {
+    root   /opt/nginx-test; # 访问 / 时，对应文件存放路径 
+    # 经查看 路径/usr/share/nginx/html内 有两个默认文件： 50x.html  index.html
+    index  index.html index.htm; # 访问 / 时，对应root路径下的哪个文件
+  }
+
+  # 监控nginx客户端的状态
+  
+  # 浏览器访问 http://47.98.181.79:3001/status
+  location = /status {
+    stub_status on;
+  }
+  # 返回结果如下:
+  # Active connections: 2
+  # server accepts handled requests 
+  # 60 60 50 
+  # Reading: 0 Writing: 1 Waiting: 1 
+  
+  # 参数与含义 
+  # Active connections 当前nginx正在处理的活动链接数
+  # accepts 总共处理的连接数
+  # handled 成功创建握手数
+  # requests 总共处理请求数
+  # reading 读取到客户端的header信息数
+  # writing 返回给客户端的header信息数
+  # waiting 开启keep-alive 的情况下，这个值等于 active - (reading + writing)
+}

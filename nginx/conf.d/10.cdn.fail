@@ -1,0 +1,36 @@
+server {
+  listen       3001;
+  server_name  47.98.181.79; # 也可以写域名  
+
+  # 生成压缩文件指令 gzip index.txt
+
+  # 静态资源访问 图片类
+  location ~ .*\.(jpg|png|gif|jpeg)$ {
+    gzip off; # 关闭压缩
+    root   /opt/nginx-test; # 对应文件存放路径 
+  }
+
+  # js css html 压缩效果很明显 
+  # 静态资源访问 html js css
+  location ~ .*\.(html|js|css)$ {
+    gzip on; # 启用压缩
+    gzip_min_length 1k; # 只压缩超过1k的文件
+    gzip_http_version 1.1; 启用gzip压缩所需要的http最低版本
+    gzip_comp_level 9; # 压缩级别，压缩比率越高，文件被压缩的体积越小
+    gzip_types  text/css application/javascript; # 进行压缩的文件类型
+    root   /opt/nginx-test; # 对应文件存放路径 
+  }
+
+  # nginx缺少gzip_static模块
+  # 参考资料 https://blog.csdn.net/biraotian/article/details/117084463
+  location ~ ^/download {
+    gzip_static on; # 服务端压缩 -> nginx是中间件 -> 客户端解压 有一行客户端才能读取
+    tcp_nopush on; # 不要着急发，攒一波再发
+    root   /opt/nginx-test; # 注意此处目录是 /opt/nginx-test 不是 /opt/nginx-test/download
+    index index.html index.htm;
+  }
+
+  # 4-4  1:01:52 -结束
+  
+  # 动静分离: 动态接口服务，与静态资源分离
+}

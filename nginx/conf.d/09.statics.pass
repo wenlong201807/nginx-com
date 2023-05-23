@@ -1,0 +1,18 @@
+server {
+  listen       3001;
+  server_name  47.98.181.79; # 也可以写域名  
+
+  # 静态资源访问
+  location / {
+    root   /opt/nginx-test; # 对应文件存放路径 
+    index index.html index.htm;
+  }
+
+  # 服务器接口访问 反向代理
+  location ~ ^/api {
+    proxy_pass http://47.98.181.79:3003;
+  }
+  # 4-4  1:01:52
+  
+  # 动静分离: 动态接口服务，与静态资源分离
+}
