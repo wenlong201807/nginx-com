@@ -1,12 +1,14 @@
 检查配置语法是否正确
 1 修改了nginx配置文件需要检查配置是否正确，
 nginx -tc /etc/nginx/nginx.conf
+nginx -tc /etc/nginx/conf/nginx.conf
 -> nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
 -> nginx: configuration file /etc/nginx/nginx.conf test is successful
 2 关闭原来的配置
 nginx -s stop -c /etc/nginx/nginx.conf
+nginx -s stop -c /etc/nginx/conf/nginx.conf
 3 重启nginx配置
-nginx -c /etc/nginx/nginx.conf
+nginx -c /etc/nginx/conf/nginx.conf
 
 # 在线服务
 ssh root@47.98.181.79
@@ -52,4 +54,13 @@ chmod -R 777 /data
 nginx 安装指南 https://zhuanlan.zhihu.com/p/378409850
 
 安装中难点解决
-  https://stackoverflow.com/questions/11213520/yum-crashed-with-keyboard-interrupt-error
+  1. https://stackoverflow.com/questions/11213520/yum-crashed-with-keyboard-interrupt-error
+
+  2. 添加nginx全局配置 指南 https://juejin.cn/post/6844904065596391438
+PATH=$PATH:/usr/local/nginx/sbin
+export PATH
+
+  3. [error] invalid PID number "" in "/etc/nginx/logs/nginx.pid"]
+-> /etc/nginx/sbin/nginx  -c /etc/nginx/conf/nginx.conf
+
+  4. user  root; # 防止403 user nobody改成user root
