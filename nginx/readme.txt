@@ -15,12 +15,15 @@ ssh root@47.98.181.79
 
 查看日志
 tail -f /var/log/nginx/error.log
-
+ ssh root@47.98.181.79  zwl@157351
 查看本机ip
 浏览器中输入 www.ip138.com
 您的iP地址是：[103.75.152.102] 来自：中国北京海淀 电信&联通&移动
 
+yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 
+
+https://link.juejin.cn/?target=https%3A%2F%2Flink.zhihu.com%2F%3Ftarget%3Dhttp%253A%2F%2Fmirrors.aliyun.com%2Fdocker-ce%2Flinux%2Fcentos%2Fdocker-ce.repo
 nginx完整语法查看官网 https://nginx.org/en/docs/  页面搜索关键词 auth_basic
 
 
@@ -45,3 +48,8 @@ nginx -s reload
 
 修改文件执行权限
 chmod -R 777 /data
+
+nginx 安装指南 https://zhuanlan.zhihu.com/p/378409850
+
+安装中难点解决
+  https://stackoverflow.com/questions/11213520/yum-crashed-with-keyboard-interrupt-error
